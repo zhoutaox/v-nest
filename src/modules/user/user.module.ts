@@ -1,0 +1,18 @@
+import { Module } from '@nestjs/common';
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
+import { DbModule } from '../db/db.module';
+import { User } from './entities/user.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    DbModule.register({
+      path: 'users.json',
+    }),
+  ],
+  controllers: [UserController],
+  providers: [UserService],
+})
+export class UserModule {}
