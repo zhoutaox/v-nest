@@ -16,7 +16,6 @@ import { UserModule } from './modules/user/user.module';
 import { MenuModule } from './modules/menu/menu.module';
 import { AiFormModule } from './modules/aiForm/aiForm.module';
 import { MongooseModule } from '@nestjs/mongoose';
-// import { DbModule } from './modules/db/db.module';
 
 @Module({
   imports: [
