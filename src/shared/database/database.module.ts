@@ -1,12 +1,8 @@
 import { ConfigKeyPaths } from '@/config';
 import { Module } from '@nestjs/common';
-
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DB_CONFIG_KEY, type DbConfigType } from '@/config';
-import { User } from '@/modules/user/entities/user.entity';
-import { Permission } from '@/modules/user/entities/permission.entity';
-import { Job } from '@/modules/job/entities/job.entity';
 
 @Module({
   imports: [
@@ -21,8 +17,7 @@ import { Job } from '@/modules/job/entities/job.entity';
           username: dbConfig?.username,
           password: dbConfig?.password,
           database: dbConfig?.database,
-          //   autoLoadEntities: true,
-          entities: [User, Permission, Job],
+          autoLoadEntities: true,
           entityPrefix: dbConfig?.prefix,
           synchronize: true,
           logging: true,

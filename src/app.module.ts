@@ -13,6 +13,8 @@ import { CatchErrorTestInterceptor } from './core/interceptors/catch.error.test.
 import { TimeoutInterceptor } from './core/interceptors/timeout.interceptor';
 import { AaaModule } from './modules/aaa/aaa.module';
 import { UserModule } from './modules/user/user.module';
+import { MenuModule } from './modules/menu/menu.module';
+import { AiFormModule } from './modules/aiForm/aiForm.module';
 import { MongooseModule } from '@nestjs/mongoose';
 // import { DbModule } from './modules/db/db.module';
 
@@ -37,6 +39,8 @@ import { MongooseModule } from '@nestjs/mongoose';
       },
     }),
     DatabaseModule,
+    MenuModule,
+    AiFormModule,
     AaaModule,
     UserModule,
   ],

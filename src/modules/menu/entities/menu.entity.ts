@@ -1,11 +1,8 @@
-import { Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '@/core/model/BaseEntity';
 
 @Entity()
 export class Menu extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({
     length: 50,
     comment: '菜单标题',

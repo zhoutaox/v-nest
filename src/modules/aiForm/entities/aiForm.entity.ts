@@ -1,7 +1,12 @@
 import { BaseEntity } from '@/core/model/BaseEntity';
-import { Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
-@Entity()
+@Entity('aiform')
 export class AiForm extends BaseEntity {
+  @Column({
+    type: 'varchar',
+    length: 255,
+    comment: '表单名称',
+  })
   name: string;
 }
