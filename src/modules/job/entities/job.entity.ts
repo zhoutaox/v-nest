@@ -1,7 +1,5 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '@/core/model/BaseEntity';
-import { dbConfig } from '@/config';
-import { AiFormName } from '@/constants/AiFormName';
 
 @Entity()
 export class Job extends BaseEntity {
