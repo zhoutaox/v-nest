@@ -12,6 +12,8 @@ export interface AllConfigType {
   [SWAGGER_CONFIG_KEY]: SwaggerConfigType;
 }
 
+export type ConfigKeyPaths = RecordNamePaths<AllConfigType>;
+
 export * from './app.config';
 export * from './db.config';
 export * from './swagger.config';

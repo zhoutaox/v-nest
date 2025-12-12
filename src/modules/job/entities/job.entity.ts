@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from '@/core/model/BaseEntity';
+import { dbConfig } from '@/config';
+import { AiFormName } from '@/constants/AiFormName';
 
 @Entity()
-export class Job {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Job extends BaseEntity {
   @Column({
     length: 30,
     comment: '职位名称',

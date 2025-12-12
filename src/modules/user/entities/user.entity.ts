@@ -4,16 +4,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Permission } from './permission.entity';
+import { BaseEntity } from '@/core/model/BaseEntity';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column({
     length: 50,
     comment: '用户名',

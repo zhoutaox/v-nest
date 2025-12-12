@@ -1,16 +1,8 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
+import { BaseEntity } from '@/core/model/BaseEntity';
 
 @Entity()
-export class Permission {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Permission extends BaseEntity {
   @Column({
     length: 50,
   })

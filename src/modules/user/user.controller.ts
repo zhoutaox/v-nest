@@ -27,7 +27,7 @@ export class UserController {
       const token = this.jwtService.sign(
         {
           user: {
-            id: foundUser.id,
+            id: foundUser.iid,
             username: foundUser.username,
           },
         },
