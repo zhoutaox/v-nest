@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Query,
-  BadRequestException,
   Post,
   Body,
   UseInterceptors,
@@ -41,7 +40,7 @@ export class AppController {
     const port = process.env.APP_PORT || 3000;
     console.log(process.env);
 
-    const url = `http://localhost:${port}/api-docs1-json`;
+    const url = `http://localhost:${port}/api-docs-json`;
 
     const data = JsonResult.getInstance();
 

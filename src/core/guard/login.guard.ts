@@ -24,7 +24,7 @@ export class LoginGuard implements CanActivate {
     const response: Response = context.switchToHttp().getResponse();
 
     if (!authorization) {
-      throw new UnauthorizedException('登录 token 错误');
+      throw new UnauthorizedException('用户未登录');
     }
 
     try {
@@ -51,7 +51,7 @@ export class LoginGuard implements CanActivate {
       //   (request as any).user = info.user;
       return true;
     } catch (e) {
-      throw new UnauthorizedException('登录 token 失效，请重新登录', e);
+      throw new UnauthorizedException('用户未登录', e);
     }
   }
 }

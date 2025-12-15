@@ -48,6 +48,8 @@ export class UserController {
     return this.userService.register(user);
   }
 
+  
+
   @Post('init')
   async init() {
     const jsonResult = JsonResult.getInstance();
