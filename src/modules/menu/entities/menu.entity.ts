@@ -7,37 +7,35 @@ export class Menu extends BaseEntity {
     length: 50,
     comment: '菜单标题',
   })
-  title: string;
+  title: string = '';
 
   @Column({
     length: 50,
     comment: '菜单路径',
   })
-  path: string;
+  path: string = '';
 
   @Column({
     length: 50,
     comment: '组件地址',
   })
-  componentUrl: string;
+  componentUrl: string = '';
 
   @Column({
     comment: '菜单类型',
     type: 'tinyint',
     default: 1,
   })
-  menuType: number;
+  menuType: number = 1;
 
   @Column({
     comment: '图标',
     length: 50,
   })
-  icon: string;
+  icon: string = '';
 
   @Column({
     comment: '父级id',
-    type: 'int',
-    default: 0,
   })
-  pid: number;
+  pid: string = '';
 }

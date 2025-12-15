@@ -65,8 +65,17 @@ export class AppController {
   }
 
   @Post('initDatabase')
-  getHello(): string {
-    throw new BadRequestException('xxxx');
+  async initDatabase() {
+    const jsonResult = JsonResult.getInstance();
+
+    const result = await this.appService.init();
+
+    if (result) {
+      jsonResult.set(HttpStatus.OK);
+    } else {
+      jsonResult.set(HttpStatus.BAD_REQUEST, '初始化失败');
+    }
+    return jsonResult;
   }
 
   @Get('pipe')

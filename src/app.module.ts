@@ -16,6 +16,7 @@ import { UserModule } from './modules/user/user.module';
 import { MenuModule } from './modules/menu/menu.module';
 import { AiFormModule } from './modules/aiForm/aiForm.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { RedisClientOptions, createClient } from 'redis';
 
 @Module({
   imports: [
@@ -61,6 +62,20 @@ import { MongooseModule } from '@nestjs/mongoose';
     {
       provide: APP_INTERCEPTOR,
       useClass: MapInterceptor,
+    },
+    {
+      provide: 'REDIS_CLIENT',
+      async useFactory() {
+        const client = createClient({
+          socket: {
+            host: 'localhost',
+            port: 6379,
+          },
+          database: 2,
+        });
+        await client.connect();
+        return client;
+      },
     },
   ],
 })

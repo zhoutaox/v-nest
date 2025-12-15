@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AiForm } from './entities/aiForm.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MenuController } from '../menu/menu.controller';
-import { MenuService } from '../menu/menu.service';
+import { AiFormController } from './aiForm.controller';
+import { AiFormService } from './aiForm.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AiForm])],
-  controllers: [MenuController],
-  providers: [MenuService],
+  controllers: [AiFormController],
+  providers: [AiFormService],
 })
 export class AiFormModule {}

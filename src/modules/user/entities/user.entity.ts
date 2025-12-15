@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { Permission } from './permission.entity';
 import { BaseEntity } from '@/core/model/BaseEntity';
 
@@ -22,12 +15,6 @@ export class User extends BaseEntity {
     comment: '密码',
   })
   password: string;
-
-  @CreateDateColumn({ comment: '创建时间' })
-  createTime: Date;
-
-  @UpdateDateColumn({ comment: '更新时间' })
-  updateTime: Date;
 
   @ManyToMany(() => Permission)
   @JoinTable({

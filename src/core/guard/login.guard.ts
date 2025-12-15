@@ -51,7 +51,7 @@ export class LoginGuard implements CanActivate {
       //   (request as any).user = info.user;
       return true;
     } catch (e) {
-      throw new UnauthorizedException('登录 token 失效，请重新登录');
+      throw new UnauthorizedException('登录 token 失效，请重新登录', e);
     }
   }
 }
