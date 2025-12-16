@@ -5,12 +5,15 @@ import {
   HttpStatus,
   Inject,
   Logger,
+  Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { JsonResult } from 'src/utils/json.result';
 import { LoginUserDto } from './dto/login-user.dto';
+import { LoginGuard } from '@/core/guard/login.guard';
 
 @Controller('user')
 export class UserController {
@@ -48,7 +51,24 @@ export class UserController {
     return this.userService.register(user);
   }
 
-  
+  @UseGuards(LoginGuard)
+  @Post('getUserInfo')
+  getUserInfo(@Headers('authorization') token: string) {
+    const jsResult = JsonResult.getInstance();
+
+    if (!token) {
+      jsResult.set(HttpStatus.UNAUTHORIZED, '请先登录');
+      return jsResult;
+    }
+    try {
+      const payload = this.jwtService.verify(token);
+      jsResult.set(HttpStatus.OK, '获取成功');
+      jsResult.setData(payload.user);
+    } catch (e) {
+      jsResult.set(HttpStatus.UNAUTHORIZED, 'token无效或已过期');
+    }
+    return jsResult;
+  }
 
   @Post('init')
   async init() {
@@ -63,4 +83,10 @@ export class UserController {
     }
     return jsonResult;
   }
+
+  @Post('dataList')
+  dataList() {}
+
+  @Post('pageList')
+  pageList() {}
 }

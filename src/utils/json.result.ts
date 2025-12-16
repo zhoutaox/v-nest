@@ -1,5 +1,15 @@
 import { HttpStatus } from '@nestjs/common';
 
+const HttpStatusMap = {
+  [HttpStatus.OK]: 'success',
+  [HttpStatus.UNAUTHORIZED]: '用户未登录',
+  [HttpStatus.ACCEPTED]: 'success',
+  [HttpStatus.NO_CONTENT]: 'success',
+  [HttpStatus.NOT_FOUND]: '请求的资源不存在',
+  [HttpStatus.BAD_REQUEST]: '请求参数错误',
+  [HttpStatus.FORBIDDEN]: '没有权限访问',
+};
+
 export class JsonResult {
   code: number;
   message: string = 'success';

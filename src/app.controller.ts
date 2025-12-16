@@ -38,7 +38,6 @@ export class AppController {
   @Post('docs')
   async docs() {
     const port = process.env.APP_PORT || 3000;
-    console.log(process.env);
 
     const url = `http://localhost:${port}/api-docs-json`;
 
@@ -50,12 +49,12 @@ export class AppController {
         message: string;
       }> = await axios.get(url);
       console.error(result);
-      if (result.data.success) {
+      if (result.data) {
         data.set(HttpStatus.OK).setData(result.data);
         return data;
       }
 
-      data.set(HttpStatus.BAD_REQUEST, result.data.message);
+      data.set(HttpStatus.BAD_REQUEST, '获取失败');
     } catch (error) {
       new Logger(this.docs.name).error(error);
       data.set(HttpStatus.BAD_REQUEST, '获取失败');

@@ -12,6 +12,12 @@ export class User extends BaseEntity {
 
   @Column({
     length: 50,
+    comment: '登录名',
+  })
+  loginName: string;
+
+  @Column({
+    length: 50,
     comment: '密码',
   })
   password: string;

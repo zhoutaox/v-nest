@@ -15,7 +15,9 @@ export class MenuController {
     const jsonResult = JsonResult.getInstance();
 
     try {
-      jsonResult.setData(await this.menuService.getAllMenus());
+      jsonResult
+        .set(HttpStatus.OK)
+        .setData(await this.menuService.getAllMenus());
     } catch (error) {
       jsonResult.set(HttpStatus.INTERNAL_SERVER_ERROR);
       this.logger.error(error);

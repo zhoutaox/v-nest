@@ -20,14 +20,14 @@ export class MenuService {
     m1_c1.title = '主控台';
     m1_c1.icon = 'home';
     m1_c1.path = '/home';
-    m1_c1.componentUrl = 'dashboard/home';
+    m1_c1.componentUrl = '/dashboard/home';
     m1_c1.pid = menu1.iid;
 
     const m1_c2 = new Menu();
     m1_c2.title = '监控台';
     m1_c2.icon = 'global';
     m1_c2.path = '/monitor';
-    m1_c2.componentUrl = 'dashboard/monitor';
+    m1_c2.componentUrl = '/dashboard/monitor';
     m1_c2.pid = menu1.iid;
 
     await this.menuRepository.save([menu1, m1_c1, m1_c2]);

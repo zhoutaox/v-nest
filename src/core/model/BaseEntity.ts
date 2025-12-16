@@ -24,7 +24,7 @@ export class BaseEntity extends TypeormBaseEntity {
   @BeforeInsert()
   generateId() {
     if (!this.iid) {
-      this.iid = nanoid();
+      this.iid = nanoid(32);
     }
   }
 }
