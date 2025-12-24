@@ -19,6 +19,8 @@ import { LoginGuard } from '@/core/guard/login.guard';
 export class UserController {
   @Inject(JwtService)
   private jwtService: JwtService;
+
+  private readonly logger = new Logger();
   constructor(private readonly userService: UserService) {}
 
   @Post('login')
@@ -38,14 +40,27 @@ export class UserController {
           expiresIn: '1d',
         },
       );
-      jsResult.set(HttpStatus.OK, '登陆成功');
-      jsResult.setData({
-        token,
-      });
+      jsResult.set(HttpStatus.OK, '登陆成功').setData({ token });
     }
     return jsResult;
   }
 
+  @Post('logout')
+  @UseGuards(LoginGuard)
+  async logout(@Headers('authorization') token: string) {
+    const jsResult = JsonResult.getInstance();
+
+    try {
+      await this.userService.addToBlackList(token);
+      jsResult.set(HttpStatus.OK, '退出成功');
+    } catch (e) {
+      jsResult.set(HttpStatus.UNAUTHORIZED, 'token无效或已过期');
+      this.logger.error(e, UserController.name);
+    }
+    return jsResult;
+  }
+
+  @UseGuards(LoginGuard)
   @Post('register')
   register(@Body() user: RegisterUserDto) {
     return this.userService.register(user);
@@ -61,11 +76,15 @@ export class UserController {
       return jsResult;
     }
     try {
-      const payload = this.jwtService.verify(token);
-      jsResult.set(HttpStatus.OK, '获取成功');
-      jsResult.setData(payload.user);
+      const payload = this.jwtService.verify<{
+        user: object;
+      }>(token);
+      jsResult.set(HttpStatus.OK, '获取成功').setData(payload.user);
     } catch (e) {
-      jsResult.set(HttpStatus.UNAUTHORIZED, 'token无效或已过期');
+      jsResult.set(
+        HttpStatus.UNAUTHORIZED,
+        (e as Error)?.message || 'token无效或已过期',
+      );
     }
     return jsResult;
   }

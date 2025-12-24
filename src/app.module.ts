@@ -11,7 +11,6 @@ import { LogInterceptor } from './core/interceptors/log.interceptor';
 import { MapInterceptor } from './core/interceptors/map.interceptor';
 import { CatchErrorTestInterceptor } from './core/interceptors/catch.error.test.interceptor';
 import { TimeoutInterceptor } from './core/interceptors/timeout.interceptor';
-import { AaaModule } from './modules/aaa/aaa.module';
 import { UserModule } from './modules/user/user.module';
 import { MenuModule } from './modules/menu/menu.module';
 import { AiFormModule } from './modules/aiForm/aiForm.module';
@@ -41,7 +40,6 @@ import { RedisClientOptions, createClient } from 'redis';
     DatabaseModule,
     MenuModule,
     AiFormModule,
-    AaaModule,
     UserModule,
   ],
   controllers: [AppController],
@@ -71,7 +69,6 @@ import { RedisClientOptions, createClient } from 'redis';
             host: 'localhost',
             port: 6379,
           },
-          database: 2,
         });
         await client.connect();
         return client;

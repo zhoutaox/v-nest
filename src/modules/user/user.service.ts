@@ -62,6 +62,8 @@ export class UserService {
     }
   }
 
+  async addToBlackList(cleanToken: string) {}
+
   async initData() {
     const permission1 = new Permission();
     permission1.name = 'create_aaa';
