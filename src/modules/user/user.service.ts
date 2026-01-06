@@ -19,7 +19,7 @@ export class UserService {
 
   async login(user: LoginUserDto, jsonResult: JsonResult) {
     const foundUser = await this.userRepository.findOneBy({
-      username: user.username,
+      loginName: user.loginName,
     });
 
     if (!foundUser) {
@@ -34,10 +34,9 @@ export class UserService {
 
     return foundUser;
   }
-  async register(user: RegisterUserDto) {
-    const jsonResult = JsonResult.getInstance();
+  async register(user: RegisterUserDto, jsonResult: JsonResult) {
     const foundUser = await this.userRepository.findOneBy({
-      username: user.username,
+      loginName: user.loginName,
     });
 
     if (foundUser) {
@@ -47,12 +46,14 @@ export class UserService {
 
     const newUser = new User();
 
+    newUser.loginName = user.loginName;
     newUser.username = user.username;
     newUser.password = md5(user.password);
+    newUser.email = user.email;
 
     try {
       await this.userRepository.save(newUser);
-      jsonResult.set(HttpStatus.OK, '注册成功');
+      jsonResult.set(HttpStatus.OK);
       return jsonResult;
     } catch (error) {
       this.logger.error(error, UserService);

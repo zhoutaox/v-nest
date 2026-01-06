@@ -15,6 +15,7 @@ import { JsonResult } from 'src/utils/json.result';
 import { LoginUserDto } from './dto/login-user.dto';
 import { LoginGuard } from '@/core/guard/login.guard';
 import { EmailService } from '../../shared/email/email.service';
+import { RedisService } from '@/shared/redis/redis.service';
 
 @Controller('user')
 export class UserController {
@@ -23,6 +24,9 @@ export class UserController {
 
   @Inject(EmailService)
   private emailService: EmailService;
+
+  @Inject(RedisService)
+  private redisService: RedisService;
 
   private readonly logger = new Logger();
   constructor(private readonly userService: UserService) {}
@@ -64,10 +68,20 @@ export class UserController {
     return jsResult;
   }
 
-  @UseGuards(LoginGuard)
   @Post('register')
-  register(@Body() user: RegisterUserDto) {
-    return this.userService.register(user);
+  async register(@Body() user: RegisterUserDto) {
+    const jsonResult = JsonResult.getInstance();
+    const captcha = await this.redisService.get(`captcha_${user.email}`);
+
+    if (!captcha) {
+      return jsonResult.set(HttpStatus.BAD_REQUEST, '验证码已过期');
+    }
+
+    if (captcha !== user.captcha) {
+      return jsonResult.set(HttpStatus.BAD_REQUEST, '验证码错误');
+    }
+
+    return this.userService.register(user, jsonResult);
   }
 
   @UseGuards(LoginGuard)
@@ -102,6 +116,8 @@ export class UserController {
     }
 
     const code = Math.random().toString().slice(2, 8);
+
+    await this.redisService.set(`captcha_${email}`, code, 5 * 60); // 5分钟过期
     try {
       await this.emailService.sendEmail({
         to: email,
