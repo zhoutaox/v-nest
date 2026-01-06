@@ -28,7 +28,7 @@ export class JsonResult {
     return this;
   }
 
-  setParams(key: string, value: object) {
+  setParams(key: string, value: object | string | number) {
     this[key] = value;
     return this;
   }

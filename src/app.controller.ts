@@ -10,7 +10,9 @@ import {
   FileTypeValidator,
   Logger,
   Inject,
+  Headers,
 } from '@nestjs/common';
+import { create } from 'svg-captcha';
 import { AppService } from './app.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { storage } from './utils/storage';
@@ -19,11 +21,21 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpStatus } from '@nestjs/common';
 import { JsonResult } from './utils/json.result';
 import { EmailService } from './shared/email/email.service';
+import { nanoid } from 'nanoid';
+import { JwtService } from '@nestjs/jwt';
+import { RedisService } from './shared/redis/redis.service';
+import { appConfig } from './config';
 
 @Controller('/app')
 export class AppController {
   @Inject(EmailService)
   private readonly emailService: EmailService;
+
+  @Inject(JwtService)
+  private readonly jwtService: JwtService;
+
+  @Inject(RedisService)
+  private readonly redisService: RedisService;
   constructor(private readonly appService: AppService) {}
 
   @ApiOperation({ summary: '获取文档信息' })
@@ -38,8 +50,8 @@ export class AppController {
   })
   @Post('docs')
   async docs() {
-    const port = process.env.APP_PORT || 3000;
-
+    const app = appConfig();
+    const port = app.port || 3000;
     const url = `http://localhost:${port}/api-docs-json`;
 
     const data = JsonResult.getInstance();
@@ -140,5 +152,41 @@ export class AppController {
       jsonResult.set(HttpStatus.BAD_REQUEST, '发送失败');
     }
     return jsonResult;
+  }
+
+  @Post('captcha')
+  async captcha(@Headers('authorization') token: string) {
+    let t = '';
+    const jsonResult = JsonResult.getInstance();
+    const captcha = create({
+      size: 4,
+      ignoreChars: '0o1i',
+      noise: 2,
+      width: 90,
+      height: 30,
+      fontSize: 40,
+      color: true,
+    });
+
+    if (!token) {
+      t = nanoid();
+    }
+
+    try {
+      this.jwtService.verify(token);
+      t = token;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      t = nanoid();
+    }
+
+    await this.redisService.set(`captcha_${t}`, captcha.text, 5 * 60); // 5分钟过期
+
+    return jsonResult
+      .set(HttpStatus.OK)
+      .setData({
+        img: captcha.data,
+      })
+      .setParams('token', t);
   }
 }

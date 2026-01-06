@@ -50,7 +50,7 @@ export class UserController {
           expiresIn: jwt.expiresIn,
         },
       );
-      jsResult.set(HttpStatus.OK).setData({ token });
+      jsResult.set(HttpStatus.OK).setParams('token', token);
     }
     return jsResult;
   }

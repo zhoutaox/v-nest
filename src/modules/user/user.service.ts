@@ -62,50 +62,10 @@ export class UserService {
     }
   }
 
-  async initData() {
-    // const permission1 = new Permission();
-    // permission1.name = 'create_aaa';
-    // permission1.desc = '创建aaa';
-    // const permission2 = new Permission();
-    // permission2.name = 'update_aaa';
-    // permission2.desc = '更新aaa';
-    // const permission3 = new Permission();
-    // permission3.name = 'remove_aaa';
-    // permission3.desc = '删除aaa';
-    // const permission4 = new Permission();
-    // permission4.name = 'query_aaa';
-    // permission4.desc = '获取aaa';
-    // const permission5 = new Permission();
-    // permission5.name = 'create_bbb';
-    // permission5.desc = '创建bbb';
-    // const permission6 = new Permission();
-    // permission6.name = 'update_bbb';
-    // permission6.desc = '更新bbb';
-    // const permission7 = new Permission();
-    // permission7.name = 'remove_bbb';
-    // permission7.desc = '删除bbb';
-    // const permission8 = new Permission();
-    // permission8.name = 'query_bbb';
-    // permission8.desc = '获取bbb';
-    // const user1 = new User();
-    // user1.username = '罗新强';
-    // user1.password = md5('123456');
-    // user1.permissions = [permission1, permission2, permission3, permission4];
-    // const user2 = new User();
-    // user2.username = '周涛';
-    // user2.password = md5('123456');
-    // user2.permissions = [permission5, permission6, permission7, permission8];
-    // await this.entityManager.save([
-    //   permission1,
-    //   permission2,
-    //   permission3,
-    //   permission4,
-    //   permission5,
-    //   permission6,
-    //   permission7,
-    //   permission8,
-    //   user1,
-    //   user2,
-    // ]);
+  initData() {
+    const user1 = new User();
+    user1.username = 'zhangsan';
+    user1.password = md5('123456');
+    user1.email = 'xxxx@xxx.com';
   }
 }
