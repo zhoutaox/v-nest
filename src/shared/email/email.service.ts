@@ -1,3 +1,9 @@
+import {
+  emailConfig,
+  EmailConfigType,
+  appConfig,
+  AppConfigType,
+} from '@/config';
 import { Injectable } from '@nestjs/common';
 import { createTransport, Transporter, SendMailOptions } from 'nodemailer';
 
@@ -10,19 +16,19 @@ enum EmailType {
 @Injectable()
 export class EmailService {
   transporter: Transporter;
-
-  private readonly EMAIL = '270535431@qq.com';
-
-  private readonly KEY = 'irrfnxbnilpvbiej';
-
+  emailConfig: EmailConfigType;
+  appConfig: AppConfigType;
   constructor() {
+    this.emailConfig = emailConfig();
+    this.appConfig = appConfig();
+
     this.transporter = createTransport({
-      host: 'smtp.qq.com',
-      port: 587,
+      host: this.emailConfig.host,
+      port: this.emailConfig.port,
       secure: false,
       auth: {
-        user: this.EMAIL,
-        pass: this.KEY,
+        user: this.emailConfig.auth.user,
+        pass: this.emailConfig.auth.pass,
       },
     });
   }
@@ -30,8 +36,8 @@ export class EmailService {
   async sendEmail(options: SendMailOptions): Promise<void> {
     await this.transporter.sendMail({
       from: {
-        name: 'v-admin',
-        address: this.EMAIL, // 修正邮箱地址
+        name: this.appConfig.name,
+        address: this.emailConfig.auth.user, // 修正邮箱地址
       },
       ...options,
     });
@@ -54,8 +60,8 @@ export class EmailService {
 
     await this.transporter.sendMail({
       from: {
-        name: 'v-admin',
-        address: this.EMAIL,
+        name: this.appConfig.name,
+        address: this.emailConfig.auth.user,
       },
       to: email,
       subject: '验证码',
