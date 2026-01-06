@@ -2,6 +2,7 @@ import { APP_CONFIG_KEY, appConfig, AppConfigType } from './app.config';
 import { DB_CONFIG_KEY, dbConfig, DbConfigType } from './db.config';
 import { REDIS_CONFIG_KEY, redisConfig, RedisConfigType } from './redis.config';
 import { EMAIL_CONFIG_KEY, emailConfig, EmailConfigType } from './email.config';
+import { JWT_CONFIG_KEY, jwtConfig, JwtConfigType } from './jwt.config';
 import {
   SWAGGER_CONFIG_KEY,
   swaggerConfig,
@@ -14,6 +15,7 @@ export interface AllConfigType {
   [SWAGGER_CONFIG_KEY]: SwaggerConfigType;
   [REDIS_CONFIG_KEY]: RedisConfigType;
   [EMAIL_CONFIG_KEY]: EmailConfigType;
+  [JWT_CONFIG_KEY]: JwtConfigType;
 }
 
 export type ConfigKeyPaths = RecordNamePaths<AllConfigType>;
@@ -23,6 +25,7 @@ export * from './db.config';
 export * from './swagger.config';
 export * from './redis.config';
 export * from './email.config';
+export * from './jwt.config';
 
 export default {
   appConfig,
@@ -30,4 +33,5 @@ export default {
   swaggerConfig,
   redisConfig,
   emailConfig,
+  jwtConfig,
 };

@@ -16,6 +16,7 @@ import { UserModule } from './modules/user/user.module';
 import { MenuModule } from './modules/menu/menu.module';
 import { AiFormModule } from './modules/aiForm/aiForm.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { jwtConfig } from './config/jwt.config';
 
 @Module({
   imports: [
@@ -30,11 +31,16 @@ import { MongooseModule } from '@nestjs/mongoose';
       envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
       load: Object.values(config),
     }),
-    JwtModule.register({
+    JwtModule.registerAsync({
       global: true,
-      secret: 'v-admin-secret',
-      signOptions: {
-        expiresIn: '1d',
+      useFactory: () => {
+        const jwt = jwtConfig();
+        return {
+          secret: jwt.secret,
+          signOptions: {
+            expiresIn: jwt.expiresIn,
+          },
+        };
       },
     }),
     DatabaseModule,

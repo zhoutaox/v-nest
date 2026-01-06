@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Observable } from 'rxjs';
+import { jwtConfig } from '@/config';
 
 @Injectable()
 export class LoginGuard implements CanActivate {
@@ -18,10 +19,10 @@ export class LoginGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request: Request = context.switchToHttp().getRequest();
-    console.log(request.header('authorization'));
 
     const authorization = request.header('authorization') || '';
     const response: Response = context.switchToHttp().getResponse();
+    const jwt = jwtConfig();
 
     if (!authorization) {
       throw new UnauthorizedException('用户未登录');
@@ -43,12 +44,10 @@ export class LoginGuard implements CanActivate {
             user: info.user,
           },
           {
-            expiresIn: '1d',
+            expiresIn: jwt.expiresIn,
           },
         ),
       );
-
-      //   (request as any).user = info.user;
       return true;
     } catch (e) {
       throw new UnauthorizedException('用户未登录', e);

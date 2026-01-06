@@ -16,6 +16,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { LoginGuard } from '@/core/guard/login.guard';
 import { EmailService } from '../../shared/email/email.service';
 import { RedisService } from '@/shared/redis/redis.service';
+import { jwtConfig } from '@/config';
 
 @Controller('user')
 export class UserController {
@@ -33,6 +34,7 @@ export class UserController {
 
   @Post('login')
   async login(@Body() user: LoginUserDto) {
+    const jwt = jwtConfig();
     const jsResult = JsonResult.getInstance();
     const foundUser = await this.userService.login(user, jsResult);
 
@@ -45,25 +47,10 @@ export class UserController {
           },
         },
         {
-          expiresIn: '1d',
+          expiresIn: jwt.expiresIn,
         },
       );
       jsResult.set(HttpStatus.OK).setData({ token });
-    }
-    return jsResult;
-  }
-
-  @Post('logout')
-  @UseGuards(LoginGuard)
-  async logout(@Headers('authorization') token: string) {
-    const jsResult = JsonResult.getInstance();
-
-    try {
-      // await this.userService.addToBlackList(token);
-      jsResult.set(HttpStatus.OK);
-    } catch (e) {
-      jsResult.set(HttpStatus.UNAUTHORIZED, 'token无效或已过期');
-      this.logger.error(e, UserController.name);
     }
     return jsResult;
   }
