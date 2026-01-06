@@ -9,4 +9,6 @@ export class AiForm extends BaseEntity {
     comment: '表单名称',
   })
   name: string;
+
+  desc: string;
 }

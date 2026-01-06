@@ -14,11 +14,15 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { JsonResult } from 'src/utils/json.result';
 import { LoginUserDto } from './dto/login-user.dto';
 import { LoginGuard } from '@/core/guard/login.guard';
+import { EmailService } from '../../shared/email/email.service';
 
 @Controller('user')
 export class UserController {
   @Inject(JwtService)
   private jwtService: JwtService;
+
+  @Inject(EmailService)
+  private emailService: EmailService;
 
   private readonly logger = new Logger();
   constructor(private readonly userService: UserService) {}
@@ -40,7 +44,7 @@ export class UserController {
           expiresIn: '1d',
         },
       );
-      jsResult.set(HttpStatus.OK, '登陆成功').setData({ token });
+      jsResult.set(HttpStatus.OK).setData({ token });
     }
     return jsResult;
   }
@@ -51,8 +55,8 @@ export class UserController {
     const jsResult = JsonResult.getInstance();
 
     try {
-      await this.userService.addToBlackList(token);
-      jsResult.set(HttpStatus.OK, '退出成功');
+      // await this.userService.addToBlackList(token);
+      jsResult.set(HttpStatus.OK);
     } catch (e) {
       jsResult.set(HttpStatus.UNAUTHORIZED, 'token无效或已过期');
       this.logger.error(e, UserController.name);
@@ -87,6 +91,29 @@ export class UserController {
       );
     }
     return jsResult;
+  }
+
+  @Post('sendEmail')
+  async sendEmail(@Body('email') email: string) {
+    const jsonResult = JsonResult.getInstance();
+
+    if (!email) {
+      return jsonResult.set(HttpStatus.BAD_REQUEST, '邮箱不能为空');
+    }
+
+    const code = Math.random().toString().slice(2, 8);
+    try {
+      await this.emailService.sendEmail({
+        to: email,
+        subject: '注册验证码',
+        html: `<p>你的注册验证码是 ${code}</p>`,
+      });
+    } catch (error) {
+      jsonResult.set(HttpStatus.INTERNAL_SERVER_ERROR);
+      this.logger.error(error, UserController.name);
+      return jsonResult;
+    }
+    return jsonResult.set(HttpStatus.OK);
   }
 
   @Post('init')

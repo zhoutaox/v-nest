@@ -6,16 +6,16 @@ import { HttpModule } from '@nestjs/axios';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './shared/database/database.module';
+import { EmailModule } from './shared/email/email.module';
+import { RedisModule } from './shared/redis/redis.module';
 import config from './config';
 import { LogInterceptor } from './core/interceptors/log.interceptor';
 import { MapInterceptor } from './core/interceptors/map.interceptor';
-import { CatchErrorTestInterceptor } from './core/interceptors/catch.error.test.interceptor';
 import { TimeoutInterceptor } from './core/interceptors/timeout.interceptor';
 import { UserModule } from './modules/user/user.module';
 import { MenuModule } from './modules/menu/menu.module';
 import { AiFormModule } from './modules/aiForm/aiForm.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RedisClientOptions, createClient } from 'redis';
 
 @Module({
   imports: [
@@ -38,6 +38,8 @@ import { RedisClientOptions, createClient } from 'redis';
       },
     }),
     DatabaseModule,
+    RedisModule,
+    EmailModule,
     MenuModule,
     AiFormModule,
     UserModule,
@@ -49,10 +51,6 @@ import { RedisClientOptions, createClient } from 'redis';
       provide: APP_INTERCEPTOR,
       useClass: LogInterceptor,
     },
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: CatchErrorTestInterceptor,
-    // },
     {
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
@@ -60,19 +58,6 @@ import { RedisClientOptions, createClient } from 'redis';
     {
       provide: APP_INTERCEPTOR,
       useClass: MapInterceptor,
-    },
-    {
-      provide: 'REDIS_CLIENT',
-      async useFactory() {
-        const client = createClient({
-          socket: {
-            host: 'localhost',
-            port: 6379,
-          },
-        });
-        await client.connect();
-        return client;
-      },
     },
   ],
 })

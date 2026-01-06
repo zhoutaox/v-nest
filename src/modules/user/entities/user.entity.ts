@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
-import { Permission } from './permission.entity';
 import { BaseEntity } from '@/core/model/BaseEntity';
+import { Role } from './role.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -22,9 +22,34 @@ export class User extends BaseEntity {
   })
   password: string;
 
-  @ManyToMany(() => Permission)
-  @JoinTable({
-    name: 'user_permission_relation',
+  @Column({
+    length: 50,
+    comment: '邮箱',
   })
-  permissions: Permission[];
+  email: string;
+
+  @Column({
+    comment: '头像',
+    length: 100,
+    nullable: true,
+  })
+  headPic: string;
+
+  @Column({
+    comment: '是否冻结',
+    default: false,
+  })
+  isFrozen: boolean;
+
+  @Column({
+    comment: '是否是管理员',
+    default: false,
+  })
+  isAdmin: boolean;
+
+  @ManyToMany(() => Role)
+  @JoinTable({
+    name: 'user_roles',
+  })
+  roles: Role[];
 }

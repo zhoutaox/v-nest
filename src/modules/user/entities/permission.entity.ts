@@ -4,13 +4,14 @@ import { BaseEntity } from '@/core/model/BaseEntity';
 @Entity()
 export class Permission extends BaseEntity {
   @Column({
-    length: 50,
+    comment: '权限代码',
+    length: 20,
   })
-  name: string;
+  code: string;
 
   @Column({
     length: 100,
-    nullable: true,
+    comment: '权限描述',
   })
-  desc: string;
+  description: string;
 }

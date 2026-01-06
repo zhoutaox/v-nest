@@ -1,7 +1,5 @@
 import {
   Controller,
-  Get,
-  Query,
   Post,
   Body,
   UseInterceptors,
@@ -11,18 +9,21 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Logger,
+  Inject,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { TestPipe } from './core/pipes/test.pipe';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { storage } from './utils/storage';
 import axios, { AxiosResponse } from 'axios';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpStatus } from '@nestjs/common';
 import { JsonResult } from './utils/json.result';
+import { EmailService } from './shared/email/email.service';
 
 @Controller('/app')
 export class AppController {
+  @Inject(EmailService)
+  private readonly emailService: EmailService;
   constructor(private readonly appService: AppService) {}
 
   @ApiOperation({ summary: '获取文档信息' })
@@ -48,7 +49,6 @@ export class AppController {
         success: boolean;
         message: string;
       }> = await axios.get(url);
-      console.error(result);
       if (result.data) {
         data.set(HttpStatus.OK).setData(result.data);
         return data;
@@ -74,13 +74,6 @@ export class AppController {
       jsonResult.set(HttpStatus.BAD_REQUEST, '初始化失败');
     }
     return jsonResult;
-  }
-
-  @Get('pipe')
-  pipeTest(@Query('aaa', TestPipe) aa: number): number {
-    // throw new Error('test error');
-    // await new Promise((resolve) => setTimeout(resolve, 4000));
-    return aa + 12;
   }
 
   @Post('upload')
@@ -125,6 +118,27 @@ export class AppController {
     console.log(body);
   }
 
-  @Post('refreshToken')
-  refreshToken() {}
+  @Post('sendEmail')
+  async sendEmail(@Body('email') email: string) {
+    const jsonResult = JsonResult.getInstance();
+
+    if (!email) {
+      return jsonResult.set(HttpStatus.BAD_REQUEST, '邮箱不能为空');
+    }
+
+    const code = Math.random().toString().slice(2, 8);
+
+    try {
+      await this.emailService.sendEmail({
+        to: email,
+        subject: '注册验证码',
+        html: `<p>你的注册验证码是 ${code}</p>`,
+      });
+      jsonResult.set(HttpStatus.OK, '发送成功');
+    } catch (error) {
+      new Logger(this.sendEmail.name).error(error);
+      jsonResult.set(HttpStatus.BAD_REQUEST, '发送失败');
+    }
+    return jsonResult;
+  }
 }
