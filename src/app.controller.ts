@@ -25,6 +25,7 @@ import { nanoid } from 'nanoid';
 import { JwtService } from '@nestjs/jwt';
 import { RedisService } from './shared/redis/redis.service';
 import { appConfig } from './config';
+import { RedisKeyType } from './core/constants/RedisKeyType';
 
 @Controller('/app')
 export class AppController {
@@ -180,7 +181,11 @@ export class AppController {
       t = nanoid();
     }
 
-    await this.redisService.set(`captcha_${t}`, captcha.text, 5 * 60); // 5分钟过期
+    await this.redisService.set(
+      `${RedisKeyType.CAPTCHA}${t}`,
+      captcha.text,
+      5 * 60,
+    ); // 5分钟过期
 
     return jsonResult
       .set(HttpStatus.OK)

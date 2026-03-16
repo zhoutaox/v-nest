@@ -17,6 +17,7 @@ import { LoginGuard } from '@/core/guard/login.guard';
 import { EmailService } from '../../shared/email/email.service';
 import { RedisService } from '@/shared/redis/redis.service';
 import { jwtConfig } from '@/config';
+import { RedisKeyType } from '@/core/constants/RedisKeyType';
 
 @Controller('user')
 export class UserController {
@@ -33,9 +34,29 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('login')
-  async login(@Body() user: LoginUserDto) {
+  async login(
+    @Body() user: LoginUserDto,
+    @Headers('authorization') token: string,
+  ) {
     const jwt = jwtConfig();
     const jsResult = JsonResult.getInstance();
+    if (!token) {
+      jsResult.set(HttpStatus.BAD_REQUEST, '请求头中缺少token');
+      return jsResult;
+    }
+    const captcha = await this.redisService.get(
+      `${RedisKeyType.CAPTCHA}${token}`,
+    );
+    if (!captcha) {
+      jsResult.set(HttpStatus.BAD_REQUEST, '验证码已过期');
+      return jsResult;
+    }
+
+    if (captcha.toLowerCase() !== user.captcha.toLowerCase()) {
+      jsResult.set(HttpStatus.BAD_REQUEST, '验证码错误');
+      return jsResult;
+    }
+
     const foundUser = await this.userService.login(user, jsResult);
 
     if (foundUser) {
@@ -55,10 +76,15 @@ export class UserController {
     return jsResult;
   }
 
+  @Post('emailLogin')
+  emailLogin() {}
+
   @Post('register')
   async register(@Body() user: RegisterUserDto) {
     const jsonResult = JsonResult.getInstance();
-    const captcha = await this.redisService.get(`captcha_${user.email}`);
+    const captcha = await this.redisService.get(
+      `${RedisKeyType.REGISTER_EMAIL_CODE}${user.email}`,
+    );
 
     if (!captcha) {
       return jsonResult.set(HttpStatus.BAD_REQUEST, '验证码已过期');
@@ -104,7 +130,11 @@ export class UserController {
 
     const code = Math.random().toString().slice(2, 8);
 
-    await this.redisService.set(`captcha_${email}`, code, 5 * 60); // 5分钟过期
+    await this.redisService.set(
+      `${RedisKeyType.REGISTER_EMAIL_CODE}${email}`,
+      code,
+      5 * 60,
+    ); // 5分钟过期
     try {
       await this.emailService.sendEmail({
         to: email,
